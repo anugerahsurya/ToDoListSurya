@@ -3,11 +3,12 @@ import { callAppsScript } from '@/lib/appsScript';
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await req.json();
-    const data = await callAppsScript('updateSubtask', { id: params.id, ...body });
+    const data = await callAppsScript('updateSubtask', { id, ...body });
     return NextResponse.json(data);
   } catch (err) {
     return NextResponse.json(
@@ -19,10 +20,11 @@ export async function PATCH(
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const data = await callAppsScript('deleteSubtask', { id: params.id });
+    const { id } = await params;
+    const data = await callAppsScript('deleteSubtask', { id });
     return NextResponse.json(data);
   } catch (err) {
     return NextResponse.json(
