@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AppDock } from '@/components/Navigation/AppDock';
 import { KegiatanCard } from '@/components/KegiatanCard';
 import { AddKegiatanModal } from '@/components/AddKegiatanModal';
+import { ConfirmDeleteModal } from '@/components/ConfirmDeleteModal';
 import { ReminderBanner } from '@/components/ReminderBanner';
 import { ExpandableSearchBar } from '@/components/ExpandableSearchBar';
 import { api } from '@/lib/api';
@@ -54,13 +55,25 @@ export default function HomePage() {
     setKegiatanList((prev) => [newKegiatan, ...prev]);
   };
 
-  const handleDeleteKegiatan = async (id: string) => {
-    if (!confirm('Yakin ingin menghapus kegiatan ini? Semua sub-task juga akan dihapus.')) return;
+  const [itemToDelete, setItemToDelete] = useState<Kegiatan | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleOpenDeleteModal = (id: string) => {
+    const item = kegiatanList.find((k) => k.id === id);
+    if (item) setItemToDelete(item);
+  };
+
+  const handleConfirmDeleteKegiatan = async () => {
+    if (!itemToDelete) return;
+    setIsDeleting(true);
     try {
-      await api.kegiatan.delete(id);
-      setKegiatanList((prev) => prev.filter((k) => k.id !== id));
+      await api.kegiatan.delete(itemToDelete.id);
+      setKegiatanList((prev) => prev.filter((k) => k.id !== itemToDelete.id));
+      setItemToDelete(null);
     } catch (err) {
       alert('Gagal menghapus: ' + (err as Error).message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -284,7 +297,7 @@ export default function HomePage() {
                   key={kegiatan.id}
                   kegiatan={kegiatan}
                   index={index}
-                  onDelete={handleDeleteKegiatan}
+                  onDelete={handleOpenDeleteModal}
                 />
               ))}
             </AnimatePresence>
@@ -300,7 +313,7 @@ export default function HomePage() {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.92 }}
         onClick={() => setIsModalOpen(true)}
-        className="fixed right-5 bottom-24 z-50 w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg"
+        className="fixed right-5 bottom-24 z-50 w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg cursor-pointer"
         style={{
           background: 'linear-gradient(135deg, #636B2F, #4a5222)',
           boxShadow: '0 6px 24px rgba(99,107,47,0.45)',
@@ -315,11 +328,22 @@ export default function HomePage() {
       {/* Dock */}
       <AppDock items={[...DOCK_ITEMS, addDockItem]} />
 
-      {/* Modal */}
+      {/* Add Modal */}
       <AddKegiatanModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddKegiatan}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={!!itemToDelete}
+        title="Hapus Kegiatan?"
+        description="Apakah Anda yakin ingin menghapus kegiatan ini? Seluruh sub-tugas dan riwayat bukti yang terkait akan ikut terhapus permanen."
+        itemName={itemToDelete?.nama}
+        isLoading={isDeleting}
+        onClose={() => !isDeleting && setItemToDelete(null)}
+        onConfirm={handleConfirmDeleteKegiatan}
       />
     </>
   );

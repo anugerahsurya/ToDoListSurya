@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import { AppDock } from '@/components/Navigation/AppDock';
 import { SubtaskItem } from '@/components/SubtaskItem';
+import { ConfirmDeleteModal } from '@/components/ConfirmDeleteModal';
 import { api } from '@/lib/api';
 import type { Kegiatan, Subtask } from '@/lib/types';
 import { getDeadlineStatus, getDeadlineBadgeClass, getDeadlineLabel } from '@/lib/types';
@@ -55,9 +56,26 @@ export default function KegiatanDetailPage() {
     await api.subtask.update(subtaskId, { selesai });
   };
 
-  const handleDeleteSubtask = async (subtaskId: string) => {
-    setSubtasks((prev) => prev.filter((s) => s.id !== subtaskId));
-    await api.subtask.delete(subtaskId);
+  const [subtaskToDelete, setSubtaskToDelete] = useState<Subtask | null>(null);
+  const [isDeletingSubtask, setIsDeletingSubtask] = useState(false);
+
+  const handleOpenDeleteSubtask = (subtaskId: string) => {
+    const item = subtasks.find((s) => s.id === subtaskId);
+    if (item) setSubtaskToDelete(item);
+  };
+
+  const handleConfirmDeleteSubtask = async () => {
+    if (!subtaskToDelete) return;
+    setIsDeletingSubtask(true);
+    try {
+      await api.subtask.delete(subtaskToDelete.id);
+      setSubtasks((prev) => prev.filter((s) => s.id !== subtaskToDelete.id));
+      setSubtaskToDelete(null);
+    } catch (err) {
+      alert('Gagal menghapus tugas: ' + (err as Error).message);
+    } finally {
+      setIsDeletingSubtask(false);
+    }
   };
 
   const handleBuktiUploaded = (subtaskId: string, url: string) => {
@@ -343,7 +361,7 @@ export default function KegiatanDetailPage() {
                 subtask={subtask}
                 index={index}
                 onToggle={handleToggleSubtask}
-                onDelete={handleDeleteSubtask}
+                onDelete={handleOpenDeleteSubtask}
                 onBuktiUploaded={handleBuktiUploaded}
               />
             ))}
@@ -395,8 +413,8 @@ export default function KegiatanDetailPage() {
                     whileTap={{ scale: 0.9 }}
                     onClick={handleAddSubtask}
                     disabled={isSavingSubtask || !newSubtaskName.trim()}
-                    className="h-10 px-4 rounded-xl text-sm font-700 text-white flex items-center gap-1.5 disabled:opacity-50"
-                    style={{ background: '#636B2F', fontWeight: 700 }}
+                    className="h-10 px-4 rounded-xl text-sm font-bold text-white flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                    style={{ background: '#636B2F' }}
                   >
                     {isSavingSubtask ? (
                       <motion.div
@@ -413,7 +431,7 @@ export default function KegiatanDetailPage() {
                   </motion.button>
                   <button
                     onClick={() => { setIsAddingSubtask(false); setNewSubtaskName(''); }}
-                    className="h-10 w-10 rounded-xl flex items-center justify-center hover:bg-[var(--border-color)] transition-colors"
+                    className="h-10 w-10 rounded-xl flex items-center justify-center hover:bg-[var(--border-color)] transition-colors cursor-pointer"
                     style={{ color: 'var(--text-muted)' }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -497,6 +515,17 @@ export default function KegiatanDetailPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Delete Subtask Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={!!subtaskToDelete}
+        title="Hapus Sub-Tugas?"
+        description="Apakah Anda yakin ingin menghapus sub-tugas ini? Bukti foto yang sudah diupload juga tidak akan ditautkan lagi."
+        itemName={subtaskToDelete?.nama}
+        isLoading={isDeletingSubtask}
+        onClose={() => !isDeletingSubtask && setSubtaskToDelete(null)}
+        onConfirm={handleConfirmDeleteSubtask}
+      />
     </>
   );
 }

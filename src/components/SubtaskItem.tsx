@@ -24,17 +24,25 @@ export function SubtaskItem({
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
 
+  const [showUncheckModal, setShowUncheckModal] = useState(false);
+
   const handleCheckboxClick = async () => {
     if (!subtask.selesai) {
       // Wajib upload bukti terlebih dahulu jika belum selesai
       setShowUploadModal(true);
     } else {
-      // Jika sudah selesai dan ingin uncheck
-      if (confirm(`Batalkan status selesai untuk tugas "${subtask.nama}"?`)) {
-        setIsLoading(true);
-        await onToggle(subtask.id, false);
-        setIsLoading(false);
-      }
+      // Buka modal konfirmasi batalkan selesai
+      setShowUncheckModal(true);
+    }
+  };
+
+  const handleConfirmUncheck = async () => {
+    setIsLoading(true);
+    try {
+      await onToggle(subtask.id, false);
+      setShowUncheckModal(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -279,6 +287,68 @@ export function SubtaskItem({
                 <span className="text-xs text-green-400 font-semibold flex items-center gap-1">
                   ✓ Bukti Terverifikasi
                 </span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Uncheck Status Confirmation Modal */}
+      <AnimatePresence>
+        {showUncheckModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-backdrop"
+            onClick={() => !isLoading && setShowUncheckModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.94, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.94, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              className="w-full max-w-sm rounded-3xl p-6 shadow-2xl"
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3.5">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                </svg>
+              </div>
+
+              <h4 className="text-base font-bold mb-1.5" style={{ color: 'var(--text-primary)' }}>
+                Batalkan Status Selesai?
+              </h4>
+              <p className="text-xs text-[var(--text-secondary)] mb-5 leading-relaxed">
+                Tugas &ldquo;{subtask.nama}&rdquo; akan diubah kembali menjadi belum selesai.
+              </p>
+
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => setShowUncheckModal(false)}
+                  className="flex-1 h-10 rounded-xl text-xs font-semibold border border-[var(--border-color)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={handleConfirmUncheck}
+                  className="flex-1 h-10 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
+                >
+                  {isLoading ? (
+                    <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    'Ya, Batalkan'
+                  )}
+                </button>
               </div>
             </motion.div>
           </motion.div>
