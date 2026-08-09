@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Kegiatan } from '@/lib/types';
-import { getDeadlineStatus, getDeadlineLabel } from '@/lib/types';
+import { getDeadlineStatus } from '@/lib/types';
 import { useState } from 'react';
 
 interface ReminderBannerProps {
@@ -15,7 +15,7 @@ export function ReminderBanner({ kegiatanList }: ReminderBannerProps) {
   // Filter: hanya yang aktif dan overdue/today/tomorrow
   const urgent = kegiatanList.filter((k) => {
     if (k.status === 'selesai') return false;
-    const st = getDeadlineStatus(k.deadline, k.status === 'selesai');
+    const st = getDeadlineStatus(k.deadline, false);
     return st === 'overdue' || st === 'today' || st === 'tomorrow';
   });
 
@@ -28,6 +28,7 @@ export function ReminderBanner({ kegiatanList }: ReminderBannerProps) {
   return (
     <AnimatePresence>
       <motion.div
+        key="reminder-banner"
         className="reminder-banner mb-6 rounded-2xl overflow-hidden"
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
