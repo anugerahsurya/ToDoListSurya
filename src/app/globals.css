@@ -1,0 +1,307 @@
+/* ============================================================
+   APLIKASI MANAJEMEN KEGIATAN — Global Styles
+   Font: Plus Jakarta Sans (Google Fonts)
+   Color Palette: #636B2F · #BAC095 · #D4DE95 · #3D4127
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties ──────────────────────────────────── */
+:root {
+  /* Colors */
+  --color-primary:       #636B2F;
+  --color-primary-dark:  #3D4127;
+  --color-secondary:     #BAC095;
+  --color-accent:        #D4DE95;
+
+  /* Light Mode */
+  --bg-base:             #FFFFFF;
+  --bg-surface:          #F8F9F4;
+  --bg-card:             #FFFFFF;
+  --bg-overlay:          rgba(255,255,255,0.85);
+  --border-color:        #E8ECDA;
+  --border-focus:        #636B2F;
+  --text-primary:        #1a1c12;
+  --text-secondary:      #5a5e48;
+  --text-muted:          #8a9070;
+  --text-inverse:        #FFFFFF;
+  --shadow-sm:           0 1px 3px rgba(61,65,39,0.08);
+  --shadow-md:           0 4px 16px rgba(61,65,39,0.12);
+  --shadow-lg:           0 8px 32px rgba(61,65,39,0.16);
+  --shadow-glow:         0 0 20px rgba(99,107,47,0.25);
+
+  /* Nav */
+  --nav-bg:              rgba(255,255,255,0.80);
+  --nav-border:          rgba(186,192,149,0.3);
+
+  /* Dock */
+  --dock-bg:             rgba(255,255,255,0.75);
+  --dock-border:         rgba(186,192,149,0.4);
+  --dock-shadow:         0 8px 32px rgba(61,65,39,0.18);
+}
+
+.dark {
+  --bg-base:             #1a1c12;
+  --bg-surface:          #23271a;
+  --bg-card:             #2a2e1e;
+  --bg-overlay:          rgba(26,28,18,0.85);
+  --border-color:        #3a3f28;
+  --border-focus:        #BAC095;
+  --text-primary:        #f0f2e8;
+  --text-secondary:      #b8be9a;
+  --text-muted:          #787d62;
+  --text-inverse:        #1a1c12;
+  --shadow-sm:           0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:           0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:           0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow:         0 0 20px rgba(212,222,149,0.15);
+
+  --nav-bg:              rgba(35,39,26,0.85);
+  --nav-border:          rgba(58,63,40,0.6);
+
+  --dock-bg:             rgba(35,39,26,0.80);
+  --dock-border:         rgba(58,63,40,0.7);
+  --dock-shadow:         0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* ── Base Styles ────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection {
+  background: var(--color-accent);
+  color: var(--color-primary-dark);
+}
+
+/* ── Focus Visible ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Glass Effect ───────────────────────────────────────────── */
+.glass {
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--nav-border);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--color-secondary);
+}
+
+/* ── Progress Ring ──────────────────────────────────────────── */
+.progress-ring {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* ── Shimmer Loading ────────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface) 25%,
+    var(--border-color) 50%,
+    var(--bg-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Checkbox Custom ────────────────────────────────────────── */
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  background: var(--bg-card);
+  flex-shrink: 0;
+}
+
+.custom-checkbox:hover {
+  border-color: var(--color-primary);
+  background: var(--color-accent);
+  opacity: 0.3;
+}
+
+.custom-checkbox:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.custom-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 0px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* ── Deadline Badge Colors ──────────────────────────────────── */
+.badge-overdue    { background: #fee2e2; color: #991b1b; }
+.badge-today      { background: #fef3c7; color: #92400e; }
+.badge-tomorrow   { background: #dbeafe; color: #1e40af; }
+.badge-upcoming   { background: var(--bg-surface); color: var(--text-secondary); }
+.badge-done       { background: #d1fae5; color: #065f46; }
+
+.dark .badge-overdue   { background: #7f1d1d; color: #fca5a5; }
+.dark .badge-today     { background: #78350f; color: #fde68a; }
+.dark .badge-tomorrow  { background: #1e3a5f; color: #93c5fd; }
+.dark .badge-upcoming  { background: var(--bg-surface); color: var(--text-secondary); }
+.dark .badge-done      { background: #064e3b; color: #6ee7b7; }
+
+/* ── Page Layout ────────────────────────────────────────────── */
+.page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 8rem;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding: 2rem 2rem 8rem;
+  }
+}
+
+/* ── Dock Override ──────────────────────────────────────────── */
+.dock-wrapper {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+/* ── Modal Backdrop ─────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .modal-backdrop {
+    align-items: center;
+  }
+}
+
+/* ── Upload Drop Zone ───────────────────────────────────────── */
+.drop-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg-surface);
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--color-primary);
+  background: rgba(212, 222, 149, 0.1);
+}
+
+/* ── Reminder Banner Animation ──────────────────────────────── */
+@keyframes slideDownBanner {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.reminder-banner {
+  animation: slideDownBanner 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Tooltip ────────────────────────────────────────────────── */
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: var(--text-inverse);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 50;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* ── Utility ────────────────────────────────────────────────── */
+.text-balance { text-wrap: balance; }
+.safe-bottom  { padding-bottom: env(safe-area-inset-bottom, 0); }
