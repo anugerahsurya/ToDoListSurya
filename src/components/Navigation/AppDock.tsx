@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -16,7 +16,6 @@ interface DockItem {
 
 interface DockProps {
   items: DockItem[];
-  onAddClick?: () => void;
 }
 
 function DockIcon({
@@ -30,7 +29,6 @@ function DockIcon({
 }) {
   const ref = useRef<HTMLButtonElement>(null);
 
-  const distance = useMotionValue(0);
   const scale = useSpring(
     useTransform(mouseX, (val) => {
       if (!ref.current) return 1;
@@ -96,7 +94,7 @@ function DockIcon({
   );
 }
 
-export function AppDock({ items, onAddClick }: DockProps) {
+export function AppDock({ items }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();

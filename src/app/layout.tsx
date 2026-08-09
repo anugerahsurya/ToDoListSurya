@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Providers } from '@/components/Providers';
 import '@/app/globals.css';
 
@@ -7,7 +7,12 @@ export const metadata: Metadata = {
   description: 'Kelola kegiatan dan progres pekerjaan Anda dengan mudah dan efisien.',
   keywords: ['to do list', 'manajemen kegiatan', 'produktivitas', 'task manager'],
   authors: [{ name: 'BPS' }],
-  viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#636B2F' },
     { media: '(prefers-color-scheme: dark)', color: '#3D4127' },
