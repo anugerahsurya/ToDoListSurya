@@ -35,9 +35,10 @@ function DockIcon({
       const bounds = ref.current.getBoundingClientRect();
       const center = bounds.x + bounds.width / 2;
       const dist = Math.abs(val - center);
-      return Math.max(1, 1.6 - dist * 0.006);
+      // Gentle magnification that won't cause overlap
+      return Math.max(1, 1.25 - dist * 0.0035);
     }),
-    { stiffness: 300, damping: 25, mass: 0.5 }
+    { stiffness: 350, damping: 28, mass: 0.3 }
   );
 
   const router = useRouter();
@@ -58,24 +59,24 @@ function DockIcon({
       data-tooltip={item.label}
       className={`
         relative flex flex-col items-center justify-center
-        w-12 h-12 rounded-2xl cursor-pointer
-        transition-colors duration-200 group
+        w-11 h-11 sm:w-12 sm:h-12 rounded-2xl cursor-pointer flex-shrink-0
+        transition-colors duration-200 group select-none
         ${isActive
-          ? 'bg-primary-500/20 text-primary-500'
-          : 'text-[var(--text-secondary)] hover:bg-[var(--border-color)] hover:text-[var(--text-primary)]'
+          ? 'bg-[#636B2F]/20 text-[#636B2F] dark:text-[#BAC095]'
+          : 'text-[var(--text-secondary)] hover:bg-[var(--border-color)]/60 hover:text-[var(--text-primary)]'
         }
       `}
-      whileTap={{ scale: 0.88 }}
+      whileTap={{ scale: 0.9 }}
     >
-      <span className="w-5 h-5 flex items-center justify-center">
+      <span className="w-5 h-5 flex items-center justify-center pointer-events-none">
         {item.icon}
       </span>
 
       {/* Active indicator */}
       {isActive && (
         <motion.span
-          layoutId="dock-active"
-          className="absolute bottom-1 w-1 h-1 rounded-full bg-primary-500"
+          layoutId="dock-active-dot"
+          className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[#636B2F] dark:bg-[#BAC095]"
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         />
       )}
@@ -102,14 +103,14 @@ export function AppDock({ items }: DockProps) {
   return (
     <div className="dock-wrapper">
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
+        initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.1 }}
         onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         className="
-          flex items-center gap-1 px-3 py-2
-          rounded-[20px] glass
+          flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2
+          rounded-[24px] glass
           shadow-[var(--dock-shadow)]
         "
         style={{
@@ -118,27 +119,30 @@ export function AppDock({ items }: DockProps) {
           boxShadow: 'var(--dock-shadow)',
         }}
       >
-        {items.map((item) => (
-          <DockIcon
-            key={item.id}
-            item={item}
-            mouseX={mouseX}
-            isActive={item.href ? pathname === item.href : false}
-          />
-        ))}
+        {items.map((item) => {
+          const isItemActive = item.href ? pathname === item.href : false;
+          return (
+            <DockIcon
+              key={item.id}
+              item={item}
+              mouseX={mouseX}
+              isActive={isItemActive}
+            />
+          );
+        })}
 
         {/* Divider */}
-        <div className="w-px h-8 mx-1" style={{ background: 'var(--border-color)' }} />
+        <div className="w-[1px] h-7 mx-0.5" style={{ background: 'var(--border-color)' }} />
 
         {/* Dark mode toggle */}
         <motion.button
-          whileTap={{ scale: 0.88 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           data-tooltip={theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
           className="
-            flex items-center justify-center w-12 h-12 rounded-2xl
-            text-[var(--text-secondary)] hover:bg-[var(--border-color)]
-            hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer
+            flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-2xl
+            text-[var(--text-secondary)] hover:bg-[var(--border-color)]/60
+            hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer flex-shrink-0
           "
         >
           <ThemeIcon theme={theme} />

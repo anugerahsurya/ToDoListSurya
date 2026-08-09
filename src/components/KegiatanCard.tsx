@@ -123,7 +123,7 @@ export function KegiatanCard({ kegiatan, index, onDelete }: KegiatanCardProps) {
         <div className="relative" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--border-color)]"
+            className="w-8 h-8 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[var(--border-color)]/60 cursor-pointer"
             style={{ color: 'var(--text-muted)' }}
             aria-label="Opsi"
           >
@@ -140,7 +140,7 @@ export function KegiatanCard({ kegiatan, index, onDelete }: KegiatanCardProps) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: -5 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-9 z-10 rounded-xl overflow-hidden shadow-lg min-w-[140px]"
+                className="absolute right-0 top-9 z-10 rounded-2xl overflow-hidden shadow-xl min-w-[140px]"
                 style={{
                   background: 'var(--bg-card)',
                   border: '1px solid var(--border-color)',
@@ -149,7 +149,7 @@ export function KegiatanCard({ kegiatan, index, onDelete }: KegiatanCardProps) {
               >
                 <button
                   onClick={() => { setShowMenu(false); router.push(`/kegiatan/${kegiatan.id}`); }}
-                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-left hover:bg-[var(--bg-surface)] transition-colors"
+                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-left hover:bg-[var(--bg-surface)] transition-colors cursor-pointer"
                   style={{ color: 'var(--text-primary)' }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -159,7 +159,7 @@ export function KegiatanCard({ kegiatan, index, onDelete }: KegiatanCardProps) {
                 </button>
                 <button
                   onClick={() => { setShowMenu(false); onDelete(kegiatan.id); }}
-                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-left hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400"
+                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-left hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400 cursor-pointer"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>

@@ -21,202 +21,269 @@ export function SubtaskItem({
   onBuktiUploaded,
 }: SubtaskItemProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [showBukti, setShowBukti] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
 
-  const handleToggle = async () => {
+  const handleCheckboxClick = async () => {
+    if (!subtask.selesai) {
+      // Wajib upload bukti terlebih dahulu jika belum selesai
+      setShowUploadModal(true);
+    } else {
+      // Jika sudah selesai dan ingin uncheck
+      if (confirm(`Batalkan status selesai untuk tugas "${subtask.nama}"?`)) {
+        setIsLoading(true);
+        await onToggle(subtask.id, false);
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleBuktiSuccess = async (url: string) => {
     setIsLoading(true);
-    await onToggle(subtask.id, !subtask.selesai);
-    setIsLoading(false);
+    try {
+      onBuktiUploaded(subtask.id, url);
+      await onToggle(subtask.id, true);
+      setShowUploadModal(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20, height: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.3, ease: 'easeOut' }}
-      className="group"
-    >
-      <div
-        className="flex items-start gap-3 p-3 rounded-xl transition-colors"
-        style={{
-          background: subtask.selesai ? 'var(--bg-surface)' : 'transparent',
-        }}
+    <>
+      <motion.div
+        layout
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 20, height: 0 }}
+        transition={{ delay: index * 0.04, duration: 0.3, ease: 'easeOut' }}
+        className="group"
       >
-        {/* Checkbox */}
-        <motion.button
-          onClick={handleToggle}
-          disabled={isLoading}
-          whileTap={{ scale: 0.85 }}
-          className="flex-shrink-0 mt-0.5"
-          aria-label={subtask.selesai ? 'Tandai belum selesai' : 'Tandai selesai'}
+        <div
+          className="flex items-start gap-3 p-3 rounded-2xl transition-all border border-transparent hover:border-[var(--border-color)]"
+          style={{
+            background: subtask.selesai ? 'var(--bg-surface)' : 'var(--bg-card)',
+          }}
         >
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <motion.div
-                key="loading"
-                className="w-5 h-5 rounded-md border-2 border-primary-500 flex items-center justify-center"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              >
-                <div className="w-2 h-2 rounded-full bg-primary-500" />
-              </motion.div>
-            ) : subtask.selesai ? (
-              <motion.div
-                key="checked"
-                initial={{ scale: 0.5 }}
-                animate={{ scale: 1 }}
-                className="w-5 h-5 rounded-md flex items-center justify-center"
-                style={{ background: '#636B2F' }}
-              >
-                <motion.svg
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.3 }}
-                  width="12" height="12" viewBox="0 0 12 12"
-                  fill="none" stroke="white" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round"
-                >
-                  <polyline points="1.5 6 4.5 9 10.5 3" />
-                </motion.svg>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="unchecked"
-                className="w-5 h-5 rounded-md border-2 hover:border-primary-500 transition-colors"
-                style={{ borderColor: 'var(--border-color)', background: 'var(--bg-card)' }}
-              />
-            )}
-          </AnimatePresence>
-        </motion.button>
-
-        {/* Text */}
-        <div className="flex-1 min-w-0">
-          <p
-            className="text-sm leading-snug transition-all"
-            style={{
-              color: subtask.selesai ? 'var(--text-muted)' : 'var(--text-primary)',
-              textDecoration: subtask.selesai ? 'line-through' : 'none',
-              fontWeight: subtask.selesai ? 400 : 500,
-            }}
+          {/* Checkbox */}
+          <motion.button
+            onClick={handleCheckboxClick}
+            disabled={isLoading}
+            whileTap={{ scale: 0.85 }}
+            className="flex-shrink-0 mt-0.5 cursor-pointer"
+            aria-label={subtask.selesai ? 'Tandai belum selesai' : 'Tandai selesai'}
           >
-            {subtask.nama}
-          </p>
+            <AnimatePresence mode="wait">
+              {isLoading ? (
+                <motion.div
+                  key="loading"
+                  className="w-5 h-5 rounded-md border-2 border-primary-500 flex items-center justify-center"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                >
+                  <div className="w-2 h-2 rounded-full bg-primary-500" />
+                </motion.div>
+              ) : subtask.selesai ? (
+                <motion.div
+                  key="checked"
+                  initial={{ scale: 0.5 }}
+                  animate={{ scale: 1 }}
+                  className="w-5 h-5 rounded-md flex items-center justify-center shadow-sm"
+                  style={{ background: '#636B2F' }}
+                >
+                  <motion.svg
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.3 }}
+                    width="12" height="12" viewBox="0 0 12 12"
+                    fill="none" stroke="white" strokeWidth="2.5"
+                    strokeLinecap="round" strokeLinejoin="round"
+                  >
+                    <polyline points="1.5 6 4.5 9 10.5 3" />
+                  </motion.svg>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="unchecked"
+                  className="w-5 h-5 rounded-md border-2 hover:border-[#636B2F] transition-colors"
+                  style={{ borderColor: 'var(--border-color)', background: 'var(--bg-surface)' }}
+                />
+              )}
+            </AnimatePresence>
+          </motion.button>
 
-          {/* Bukti foto thumbnail */}
-          {subtask.buktiFotoUrl && (
-            <motion.button
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => setShowImageModal(true)}
-              className="mt-1.5 flex items-center gap-1.5 text-xs hover:underline"
-              style={{ color: '#636B2F' }}
+          {/* Text */}
+          <div className="flex-1 min-w-0">
+            <p
+              onClick={handleCheckboxClick}
+              className="text-sm leading-snug transition-all cursor-pointer select-none"
+              style={{
+                color: subtask.selesai ? 'var(--text-muted)' : 'var(--text-primary)',
+                textDecoration: subtask.selesai ? 'line-through' : 'none',
+                fontWeight: subtask.selesai ? 400 : 600,
+              }}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
+              {subtask.nama}
+            </p>
+
+            {/* Bukti foto info / thumbnail */}
+            {subtask.buktiFotoUrl ? (
+              <motion.button
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => setShowImageModal(true)}
+                className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                style={{
+                  background: 'rgba(99, 107, 47, 0.12)',
+                  color: '#636B2F',
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                Lihat Bukti Foto
+              </motion.button>
+            ) : (
+              <p className="text-[11px] mt-1 text-[var(--text-muted)] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                Klik untuk upload bukti & selesaikan tugas
+              </p>
+            )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-1">
+            {/* Ganti / Upload bukti */}
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={() => setShowUploadModal(true)}
+              data-tooltip={subtask.buktiFotoUrl ? 'Ganti Bukti' : 'Upload Bukti'}
+              className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-[var(--border-color)]/60 cursor-pointer"
+              style={{ color: subtask.buktiFotoUrl ? '#636B2F' : 'var(--text-muted)' }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
                 <polyline points="21 15 16 10 5 21"/>
               </svg>
-              Lihat Bukti
             </motion.button>
-          )}
+
+            {/* Delete */}
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={() => onDelete(subtask.id)}
+              data-tooltip="Hapus Tugas"
+              className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </motion.button>
+          </div>
         </div>
+      </motion.div>
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          {/* Upload bukti */}
-          <motion.button
-            whileTap={{ scale: 0.88 }}
-            onClick={() => setShowBukti(!showBukti)}
-            data-tooltip="Tambah Bukti"
-            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--border-color)]"
-            style={{ color: subtask.buktiFotoUrl ? '#636B2F' : 'var(--text-muted)' }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-          </motion.button>
-
-          {/* Delete */}
-          <motion.button
-            whileTap={{ scale: 0.88 }}
-            onClick={() => onDelete(subtask.id)}
-            data-tooltip="Hapus"
-            className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-            </svg>
-          </motion.button>
-        </div>
-      </div>
-
-      {/* Bukti upload panel */}
+      {/* Mandatory Upload Modal */}
       <AnimatePresence>
-        {showBukti && (
+        {showUploadModal && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="overflow-hidden px-3 pb-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="modal-backdrop"
+            onClick={() => setShowUploadModal(false)}
           >
-            <BuktiUpload
-              subtaskId={subtask.id}
-              currentUrl={subtask.buktiFotoUrl}
-              onUploaded={(url) => {
-                onBuktiUploaded(subtask.id, url);
-                setShowBukti(false);
+            <motion.div
+              initial={{ y: 50, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 50, opacity: 0, scale: 0.96 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl p-6"
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
               }}
-            />
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#636B2F]/15 text-[#636B2F] dark:text-[#BAC095]">
+                    Bukti Penyelesaian Wajib
+                  </span>
+                  <h3 className="text-base font-bold mt-2 leading-snug" style={{ color: 'var(--text-primary)' }}>
+                    Upload Bukti: {subtask.nama}
+                  </h3>
+                  <p className="text-xs text-[var(--text-muted)] mt-1">
+                    Ambil foto langsung, upload file, atau tekan <kbd className="px-1.5 py-0.5 rounded bg-[var(--border-color)] text-[10px] font-mono">Ctrl+V</kbd> untuk screenshot.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowUploadModal(false)}
+                  className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-[var(--border-color)]/60 cursor-pointer"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <BuktiUpload
+                subtaskId={subtask.id}
+                currentUrl={subtask.buktiFotoUrl}
+                onUploaded={handleBuktiSuccess}
+              />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Image Modal */}
+      {/* Image Modal Viewer */}
       <AnimatePresence>
         {showImageModal && subtask.buktiFotoUrl && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)' }}
+            className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
             onClick={() => setShowImageModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="relative max-w-2xl w-full rounded-2xl overflow-hidden"
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              className="relative max-w-2xl w-full rounded-3xl overflow-hidden bg-black/40 border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={subtask.buktiFotoUrl}
                 alt={`Bukti: ${subtask.nama}`}
-                className="w-full object-contain max-h-[70vh]"
+                className="w-full max-h-[75vh] object-contain"
               />
               <button
                 onClick={() => setShowImageModal(false)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 cursor-pointer shadow-lg"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M18 6 6 18M6 6l12 12"/>
                 </svg>
               </button>
-              <div className="absolute bottom-0 left-0 right-0 p-3 text-sm text-white font-medium"
-                style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.6))' }}>
-                {subtask.nama}
+              <div
+                className="p-4 text-sm text-white font-medium flex items-center justify-between"
+                style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.85))' }}
+              >
+                <span>{subtask.nama}</span>
+                <span className="text-xs text-green-400 font-semibold flex items-center gap-1">
+                  ✓ Bukti Terverifikasi
+                </span>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </>
   );
 }

@@ -106,14 +106,13 @@ export function AddKegiatanModal({ isOpen, onClose, onSubmit }: AddKegiatanModal
                   {...register('nama')}
                   type="text"
                   placeholder="Contoh: Pengerjaan Laporan Aktualisasi"
-                  className="w-full h-11 px-4 rounded-xl text-sm outline-none transition-all"
+                  className={`w-full h-11 px-4 rounded-xl text-sm outline-none transition-colors border ${
+                    errors.nama ? 'border-red-500' : 'border-[var(--border-color)] focus:border-[#636B2F]'
+                  }`}
                   style={{
                     background: 'var(--bg-surface)',
-                    border: `1.5px solid ${errors.nama ? '#ef4444' : 'var(--border-color)'}`,
                     color: 'var(--text-primary)',
                   }}
-                  onFocus={(e) => e.target.style.borderColor = errors.nama ? '#ef4444' : '#636B2F'}
-                  onBlur={(e) => e.target.style.borderColor = errors.nama ? '#ef4444' : 'var(--border-color)'}
                 />
                 {errors.nama && (
                   <p className="text-xs text-red-500">{errors.nama.message}</p>
@@ -122,21 +121,20 @@ export function AddKegiatanModal({ isOpen, onClose, onSubmit }: AddKegiatanModal
 
               {/* Deskripsi */}
               <div className="space-y-1.5">
-                <label className="text-sm font-600" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+                <label className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
                   Deskripsi <span className="text-xs font-normal" style={{ color: 'var(--text-muted)' }}>(opsional)</span>
                 </label>
                 <textarea
                   {...register('deskripsi')}
                   placeholder="Deskripsi singkat tentang kegiatan ini..."
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none transition-all"
+                  className={`w-full px-4 py-3 rounded-xl text-sm outline-none resize-none transition-colors border ${
+                    errors.deskripsi ? 'border-red-500' : 'border-[var(--border-color)] focus:border-[#636B2F]'
+                  }`}
                   style={{
                     background: 'var(--bg-surface)',
-                    border: `1.5px solid var(--border-color)`,
                     color: 'var(--text-primary)',
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#636B2F'}
-                  onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
                 />
                 {errors.deskripsi && (
                   <p className="text-xs text-red-500">{errors.deskripsi.message}</p>
@@ -145,7 +143,7 @@ export function AddKegiatanModal({ isOpen, onClose, onSubmit }: AddKegiatanModal
 
               {/* Deadline */}
               <div className="space-y-1.5">
-                <label className="text-sm font-600" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+                <label className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
                   Deadline <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -153,15 +151,14 @@ export function AddKegiatanModal({ isOpen, onClose, onSubmit }: AddKegiatanModal
                     {...register('deadline')}
                     type="date"
                     min={today}
-                    className="w-full h-11 px-4 rounded-xl text-sm outline-none transition-all"
+                    className={`w-full h-11 px-4 rounded-xl text-sm outline-none transition-colors border ${
+                      errors.deadline ? 'border-red-500' : 'border-[var(--border-color)] focus:border-[#636B2F]'
+                    }`}
                     style={{
                       background: 'var(--bg-surface)',
-                      border: `1.5px solid ${errors.deadline ? '#ef4444' : 'var(--border-color)'}`,
                       color: 'var(--text-primary)',
                       colorScheme: 'light dark',
                     }}
-                    onFocus={(e) => e.target.style.borderColor = errors.deadline ? '#ef4444' : '#636B2F'}
-                    onBlur={(e) => e.target.style.borderColor = errors.deadline ? '#ef4444' : 'var(--border-color)'}
                   />
                 </div>
                 {errors.deadline && (
