@@ -2,7 +2,9 @@
 // APPS SCRIPT CONFIG — simpan URL setelah deploy
 // ============================================================
 
-export const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL || '';
+export const APPS_SCRIPT_URL =
+  process.env.APPS_SCRIPT_URL ||
+  'https://script.google.com/macros/s/AKfycbztzOr5WoVI_gjZzwUZ0EMVRV2lo4NOYu6EpNrNhzvuVmfDoyqAruh_iFgEI4SZzxdc/exec';
 
 export async function callAppsScript(
   action: string,

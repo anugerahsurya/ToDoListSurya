@@ -2,7 +2,7 @@
 // API CLIENT — Proxy ke Next.js API Routes
 // ============================================================
 
-import type { Kegiatan, Subtask } from './types';
+import type { Kegiatan, Subtask, ProgresItem } from './types';
 
 const BASE = '/api';
 
@@ -71,6 +71,30 @@ export const api = {
       request('/bukti/upload', {
         method: 'POST',
         body: JSON.stringify({ subtaskId, base64, filename }),
+      }),
+  },
+
+  progres: {
+    list: () => request<ProgresItem[]>('/progres'),
+    get: (id: string) => request<ProgresItem>(`/progres/${id}`),
+    update: (id: string, data: Partial<ProgresItem>) =>
+      request<{ success: boolean; id: string }>(`/progres/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
+  },
+
+  progresBukti: {
+    upload: (
+      progresId: string,
+      base64: string | undefined,
+      filename: string,
+      buktiType: 'image' | 'pdf' | 'link',
+      url?: string
+    ) =>
+      request<{ success: boolean, url: string }>('/progres-bukti/upload', {
+        method: 'POST',
+        body: JSON.stringify({ progresId, base64, filename, buktiType, url }),
       }),
   },
 };

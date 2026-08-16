@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Aplikasi Manajemen Kegiatan',
   description: 'Kelola kegiatan dan progres pekerjaan Anda dengan mudah dan efisien.',
   keywords: ['to do list', 'manajemen kegiatan', 'produktivitas', 'task manager'],
-  authors: [{ name: 'BPS' }],
+  authors: [{ name: 'Anugerah Surya Atmaja' }],
 };
 
 export const viewport: Viewport = {
@@ -14,8 +14,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#636B2F' },
-    { media: '(prefers-color-scheme: dark)', color: '#3D4127' },
+    { media: '(prefers-color-scheme: light)', color: '#2563EB' },
+    { media: '(prefers-color-scheme: dark)', color: '#080D1A' },
   ],
 };
 

@@ -23,6 +23,29 @@ export interface Subtask {
   urutan?: number;
 }
 
+export interface ProgresItem {
+  id: string;
+  noKegiatan: number;
+  kegiatan: string;
+  noTahapan: string;
+  tahapanKegiatan: string;
+  outputHasil: string;
+  mingguAwal: string;
+  mingguAkhir: string;
+  deadlineText: string;
+  deadlineStart: string;
+  deadlineEnd: string;
+  bentukBukti: string;
+  statusSubmit: 'Belum Submit' | 'Sudah Submit';
+  buktiUrl?: string;
+  buktiType?: 'image' | 'pdf' | 'link';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type StatusSubmitFilter = 'semua' | 'belum' | 'sudah';
+export type MingguFilter = string;
+
 export type DeadlineStatus = 'overdue' | 'today' | 'tomorrow' | 'upcoming' | 'done';
 
 export function getDeadlineStatus(deadline: string, isSelesai: boolean): DeadlineStatus {
@@ -55,4 +78,50 @@ export function getDeadlineLabel(deadline: string, isSelesai: boolean): string {
   if (status === 'tomorrow') return 'Besok';
   const dl = new Date(deadline);
   return dl.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+export function formatTitleCase(str?: string): string {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+export function formatNoTahapan(val: any, index: number, noKeg?: number): string {
+  if (noKeg) {
+    return `${noKeg}.${index + 1}`;
+  }
+  return String(index + 1);
+}
+
+export function formatCompactDate(dateStr?: string): string {
+  if (!dateStr) return '-';
+  // If it contains ISO time or timestamp, convert to date only
+  if (dateStr.includes('T')) {
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    }
+  }
+
+  // Shorten month names so they fit neatly on one line
+  return dateStr
+    .replace(/Januari/gi, 'Jan')
+    .replace(/Februari/gi, 'Feb')
+    .replace(/Maret/gi, 'Mar')
+    .replace(/April/gi, 'Apr')
+    .replace(/Mei/gi, 'Mei')
+    .replace(/Juni/gi, 'Jun')
+    .replace(/Juli/gi, 'Jul')
+    .replace(/Agustus/gi, 'Agu')
+    .replace(/September/gi, 'Sep')
+    .replace(/Oktober/gi, 'Okt')
+    .replace(/November/gi, 'Nov')
+    .replace(/Desember/gi, 'Des');
 }

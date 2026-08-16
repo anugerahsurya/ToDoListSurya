@@ -62,7 +62,7 @@ function DockIcon({
         w-11 h-11 sm:w-12 sm:h-12 rounded-2xl cursor-pointer flex-shrink-0
         transition-colors duration-200 group select-none
         ${isActive
-          ? 'bg-[#636B2F]/20 text-[#636B2F] dark:text-[#BAC095]'
+          ? 'bg-[var(--color-accent-light)] text-[var(--color-primary)]'
           : 'text-[var(--text-secondary)] hover:bg-[var(--border-color)]/60 hover:text-[var(--text-primary)]'
         }
       `}
@@ -76,7 +76,7 @@ function DockIcon({
       {isActive && (
         <motion.span
           layoutId="dock-active-dot"
-          className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[#636B2F] dark:bg-[#BAC095]"
+          className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]"
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         />
       )}
